@@ -1,6 +1,6 @@
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.hashers import make_password, identify_hasher
-from django.db.models import EmailField, CharField, BooleanField, DateTimeField #для оптимизации приложения импортируем только те модули, которые применяем
+from django.db.models import EmailField, CharField, BooleanField, DateTimeField, SET_NULL, TextField, ImageField, DateField, SlugField, ManyToManyField, ForeignKey# для оптимизации приложения импортируем только те модули, которые применяем
 
 
 class UserManager(BaseUserManager):
@@ -34,10 +34,24 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
-    email = EmailField(unique=True, max_length=50)
-    name = CharField(blank=True, max_length=255, null=True)
-    full_name = CharField(blank=True, max_length=255, null=True)
-    is_active = BooleanField(default=True)
+    status_choices = [
+        ('в активном поиске', 'в активном поиске'),
+        ('без отношений', 'без отношений'),
+        ('в отношениях с', 'в отношениях с'),
+        ('в браке с', 'в браке с'),
+        ('все сложно', 'все сложно'),
+    ]
+
+    email = EmailField(max_length=40, unique=True, verbose_name='e-mail')
+    slug = SlugField(unique=True, default= None, verbose_name='Url')
+    first_name = CharField(max_length=30, default=None, verbose_name='Имя')
+    last_name = CharField(max_length=30, default=None, verbose_name='Фамилия')
+    birth_date = DateField(blank=True, default=None)
+    info = TextField(blank=True)
+    friends = ManyToManyField('User', blank=True, related_name='user_friends')
+    status = CharField(max_length=50, choices=status_choices, default='без отношений')
+    partner = ForeignKey('User', SET_NULL, null=True, default=None, blank=True, related_name='user_partner')
+    photo = ImageField(upload_to='photo/%Y/%M/%D/', blank=True)
     staff = BooleanField(default=False)
     admin = BooleanField(default=False)
     created_at = DateTimeField(auto_now_add=True)
