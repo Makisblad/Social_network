@@ -1,6 +1,7 @@
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.hashers import make_password, identify_hasher
 from django.db.models import EmailField, CharField, BooleanField, DateTimeField, SET_NULL, TextField, ImageField, DateField, SlugField, ManyToManyField, ForeignKey# для оптимизации приложения импортируем только те модули, которые применяем
+from django.urls import reverse
 
 
 class UserManager(BaseUserManager):
@@ -33,6 +34,7 @@ class UserManager(BaseUserManager):
 
 
 
+
 class User(AbstractBaseUser):
     status_choices = [
         ('в активном поиске', 'в активном поиске'),
@@ -43,10 +45,10 @@ class User(AbstractBaseUser):
     ]
 
     email = EmailField(max_length=40, unique=True, verbose_name='e-mail')
-    slug = SlugField(unique=True, default= None, verbose_name='Url')
+    slug = SlugField(unique=True, default= None, verbose_name='Ник')
     first_name = CharField(max_length=30, default=None, verbose_name='Имя')
     last_name = CharField(max_length=30, default=None, verbose_name='Фамилия')
-    birth_date = DateField(blank=True, default=None)
+    birth_date = DateField(blank=True)
     info = TextField(blank=True)
     friends = ManyToManyField('User', blank=True, related_name='user_friends')
     status = CharField(max_length=50, choices=status_choices, default='без отношений')
@@ -100,3 +102,5 @@ class User(AbstractBaseUser):
             self.password = make_password(self.password)
         super().save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return reverse('user', kwargs={'slug':self.slug})
