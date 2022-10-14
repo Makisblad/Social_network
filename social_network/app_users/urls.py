@@ -6,7 +6,6 @@ urlpatterns = [
     path('', test, name='test'),
     #path("/<str:slug>", user, name='test'),
     path("register/", register, name='register'),
-    path("login/", login, name='login'),
-    #path("register/", UserRegister.as_view(), name='register'),
-    #path("login/", UserLogin.as_view(), name='login'),
+    path("login/", user_login, name='login'),
+    path("logout/", user_logout, name='logout'),
     ]

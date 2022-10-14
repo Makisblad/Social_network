@@ -2,5 +2,14 @@
 {% load static %}
 
 {% block content %}
-<h1>Авторизация</h1>
+<h1>Авторизация пользователя</h1>
+<div style="margin: 40px;">
+<form method="post" style="margin: 40px;">
+    {% csrf_token %}
+    {{ form.as_p }}
+ <button type="submit" class="btn btn-primary btn-block" style="background-color: #0CC; border-color: #0CC">Регистрация</button>
+</form>
+</div>
+
+
 {% endblock %}

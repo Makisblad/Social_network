@@ -8,7 +8,7 @@
         Здравствуйте, {{ user.username }}!       <button class="btn btn-primary" style="background-color: #0CC; border-color: #0CC">
                     <a href="#" style="color: white">Новый пост</a></button>
         <button class="btn btn-primary" style="background-color: #0CC; border-color: #0CC">
-                    <a href="#" style="color: white">Выход</a></button>
+                    <a href="{% url 'logout' %}" style="color: white">Выход</a></button>
       {% else %}
         <button class="btn btn-primary" style="background-color: white; border-color: #0CC"><a href="{% url 'register' %}" style="color: #0CC">Регистрация</a></button>
         <button class="btn btn-primary" style="background-color: white; border-color: #0CC"><a href="{% url 'login' %}" style="color: #0CC">Авторизация</a></button>
