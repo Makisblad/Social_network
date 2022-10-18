@@ -5,7 +5,7 @@
 
     <span class="navbar-text">
       {% if request.user.is_authenticated %}
-        Здравствуйте, {{ user.username }}!       <button class="btn btn-primary" style="background-color: #0CC; border-color: #0CC">
+        Здравствуйте, {{ user.first_name }}!       <button class="btn btn-primary" style="background-color: #0CC; border-color: #0CC">
                     <a href="#" style="color: white">Новый пост</a></button>
         <button class="btn btn-primary" style="background-color: #0CC; border-color: #0CC">
                     <a href="{% url 'logout' %}" style="color: white">Выход</a></button>

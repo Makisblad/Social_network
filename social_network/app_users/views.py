@@ -1,7 +1,17 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import UserRegisterForm, UserLoginForm
-from django.contrib.auth import login,logout
+from django.contrib.auth import login, logout, authenticate
+from django.views.generic import ListView, DetailView
+from .models import *
+
+
+class Users(ListView):
+    model = User
+    template_name = 'app_users/users.html'
+    context_object_name = 'user'
+    allow_empty = False
+
 
 def test(request):
     return render(request, "app_users/test.html")
