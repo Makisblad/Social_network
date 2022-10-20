@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{user.first_name}} {{user.last_name}} {% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+    <div class="col-md-3">
+         {% if user.photo %}
+            <img src="{{ user.photo.url }}" class="main_photo">
+        {% else %}
+            <img src="https://api.lorem.space/image/fashion?w=200&h=300" class="main_photo">
+        {% endif %}
+    </div>
+    <div class="col-md-9">
+        <table cellpadding="10">
+            <tr><td>Имя:</td><td> {{ user.first_name }} {{ user.last_name }}</td></tr>
+            <tr><td>Дата рождения:</td><td>{{ user.birth_date }}</td></tr>
+            <tr><td>Обо мне:</td><td>{{ user.info }}</td></tr>
+            <tr><td>Семейное положение:</td><td>{{ user.status }}</td></tr>
+            {% if user.partner %}
+            <tr><td>Партнер:</td><td>{{ user.partner }}</td></tr>
+            {% endif %}
+            <tr><td>Дата рождения:</td><td>{{ user.birth_date }}</td></tr>
+        </table>
+
+
+    </div>
+    <div class="col-md-8" align=”right”>
+     <button class="btn btn-primary" style="background-color: #0CC; border-color: #0CC; float: right"><a href="{% url 'login' %}" style="color: white">Редактировать</a></button>
+    </div>
+    </div>
+</div>
+
+{% endblock %}

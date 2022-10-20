@@ -9,8 +9,20 @@ from .models import *
 class Users(ListView):
     model = User
     template_name = 'app_users/users.html'
+    context_object_name = 'users'
+    allow_empty = False
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Найти друзей'
+        return context
+
+class View_User(DetailView):
+    model = User
+    template_name = 'app_users/user.html'
     context_object_name = 'user'
     allow_empty = False
+
 
 
 def test(request):

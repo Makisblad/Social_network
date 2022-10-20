@@ -54,7 +54,7 @@ class User(AbstractBaseUser):
     friends = ManyToManyField('User', blank=True, related_name='user_friends')
     status = CharField(max_length=50, choices=status_choices, default='без отношений')
     partner = ForeignKey('User', SET_NULL, null=True, default=None, blank=True, related_name='user_partner')
-    photo = ImageField(upload_to='photo/%Y/%M/%D/', blank=True)
+    photo = ImageField(upload_to='photo/%Y/%M/%D/', blank=True, null=True)
     staff = BooleanField(default=False)
     admin = BooleanField(default=False)
     created_at = DateTimeField(auto_now_add=True)

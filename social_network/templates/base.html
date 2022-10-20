@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{% static 'css/templatemo-xtra-blog.css' %}">
 </head>
 <body>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-3">{% include 'inc/_sidebar.html' %}</div>
@@ -32,6 +33,7 @@
                 {% endfor %}
             {% endif %}
             {% block content %}{% endblock %}
+            {% include 'inc/_footer.html' %}
         </div>
     </div>
 </div>

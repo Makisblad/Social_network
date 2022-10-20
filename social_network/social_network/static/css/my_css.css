@@ -1,0 +1,27 @@
+.round {
+  display: inline-block;
+  border-radius: 50%;
+  overflow: hidden;
+  width: 75px;
+  height: 75px;
+   }
+
+a {
+    color: #999;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #0CC;
+    border-color: #0CC;
+}
+
+
+.main_photo{
+    object-fit: cover;
+    width: 200px;
+    height: 300px;
+}
+
