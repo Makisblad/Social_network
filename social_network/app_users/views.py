@@ -24,7 +24,6 @@ class View_User(DetailView):
     allow_empty = False
 
 
-
 def test(request):
     return render(request, "app_users/test.html")
 

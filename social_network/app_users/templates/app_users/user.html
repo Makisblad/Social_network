@@ -24,12 +24,26 @@
             <tr><td>Дата рождения:</td><td>{{ user.birth_date }}</td></tr>
         </table>
 
-
     </div>
     <div class="col-md-8" align=”right”>
      <button class="btn btn-primary" style="background-color: #0CC; border-color: #0CC; float: right"><a href="{% url 'login' %}" style="color: white">Редактировать</a></button>
     </div>
     </div>
+    <div class="row">
+        <div class="col-md-12">
+            Мои друзья:..
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            Мои посты:...
+        </div>
+        <div class="col-md-6">
+            Комментарии к постам
+        </div>
+
+    </div>
+
 </div>
 
 {% endblock %}

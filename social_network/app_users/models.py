@@ -1,7 +1,9 @@
 from autoslug import AutoSlugField
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.hashers import make_password, identify_hasher
-from django.db.models import EmailField, CharField, BooleanField, DateTimeField, SET_NULL, TextField, ImageField, DateField, SlugField, ManyToManyField, ForeignKey# для оптимизации приложения импортируем только те модули, которые применяем
+from django.db.models import Model, FileField, IntegerField, EmailField, CharField, BooleanField, DateTimeField, SET_NULL, PROTECT, \
+    TextField, ImageField, DateField, SlugField, ManyToManyField, ForeignKey, \
+    CASCADE  # для оптимизации приложения импортируем только те модули, которые применяем
 from django.urls import reverse
 
 
@@ -34,8 +36,6 @@ class UserManager(BaseUserManager):
         return user
 
 
-
-
 class User(AbstractBaseUser):
     status_choices = [
         ('в активном поиске', 'в активном поиске'),
@@ -45,16 +45,16 @@ class User(AbstractBaseUser):
         ('все сложно', 'все сложно'),
     ]
     username = CharField(max_length=30, unique=True, verbose_name='Ник')
-    email = EmailField(max_length=40, unique=True, verbose_name='e-mail')
+    email = EmailField(max_length=40, unique=True, verbose_name='e-mail', editable=True)
     slug = AutoSlugField(populate_from='username', verbose_name='slug')
-    first_name = CharField(max_length=30, blank=True, verbose_name='Имя')
-    last_name = CharField(max_length=30, blank=True, verbose_name='Фамилия')
-    birth_date = DateField(blank=True, default='2022-01-01')
-    info = TextField(blank=True)
-    friends = ManyToManyField('User', blank=True, related_name='user_friends')
-    status = CharField(max_length=50, choices=status_choices, default='без отношений')
-    partner = ForeignKey('User', SET_NULL, null=True, default=None, blank=True, related_name='user_partner')
-    photo = ImageField(upload_to='photo/%Y/%M/%D/', blank=True, null=True)
+    first_name = CharField(max_length=30, blank=True, verbose_name='Имя', editable=True)
+    last_name = CharField(max_length=30, blank=True, verbose_name='Фамилия', editable=True)
+    birth_date = DateField(blank=True, default='2022-01-01', editable=True)
+    info = TextField(blank=True, editable=True)
+    friends = ManyToManyField('User', blank=True, related_name='user_friends', editable=True)
+    status = CharField(max_length=50, choices=status_choices, default='без отношений', editable=True)
+    partner = ForeignKey('User', SET_NULL, null=True, default=None, blank=True, related_name='user_partner', editable=True)
+    photo = ImageField(upload_to='photo/%Y/%M/%D/', blank=True, null=True, editable=True)
     staff = BooleanField(default=False)
     admin = BooleanField(default=False)
     created_at = DateTimeField(auto_now_add=True)
@@ -102,3 +102,71 @@ class User(AbstractBaseUser):
 
     def get_absolute_url(self):
         return reverse('user', kwargs={'slug': self.slug})
+
+class Posts (Model):
+    title = CharField(max_length=150, verbose_name='Название поста', editable=True)
+    content = TextField(blank=True, verbose_name='Пост', editable=True)
+    created_at = DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    updated_at = DateTimeField(auto_now=True, verbose_name='Дата изменения')
+    photo = ImageField(upload_to='photos/%Y/%m/%d/', verbose_name='Фото', blank=True)
+    tag = ManyToManyField('Tags', verbose_name='Тэги')  # null=True для того, чтобы что-то было указано для уже заведенных записей
+    views = IntegerField(default=0)
+    author = ForeignKey(User, on_delete=CASCADE, verbose_name='Автор поста')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'Пост'
+        verbose_name_plural = 'Посты'
+        ordering = ['-created_at']
+
+class Tags(Model):
+    title = CharField(max_length=20)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'Тэги'
+        verbose_name_plural = 'Тэг'
+
+
+class Comments(Model):
+    comment = TextField(blank=True, verbose_name='Пост', editable=True)
+    created_at = DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    author = ForeignKey(User, on_delete=CASCADE, verbose_name='Автор комментария')
+    to_post = ForeignKey(Posts, on_delete=CASCADE, verbose_name='Относится к посту')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+        ordering = ['to_post', '-created_at']
+
+
+class Chats (Model):
+    title = CharField(max_length=150, verbose_name='Название чата', editable=True)
+    author = ForeignKey(User, on_delete=CASCADE, verbose_name='Автор чата')
+    created_at = DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    participants = ManyToManyField('User', blank=True, related_name='chat_users', editable=True)
+
+
+    def __str__(self):
+        return self.title
+
+class Chat_Messages(Model):
+    chat_message = TextField(blank=True, verbose_name='Сообщение', editable=True)
+    attachment = FileField(blank=True, upload_to='attaches/%Y/%m/%d/', verbose_name='Вложенные файлы' )
+    created_at = DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    author = ForeignKey(User, on_delete=CASCADE, verbose_name='Автор сообщения')
+    to_chat = ForeignKey(Posts, on_delete=CASCADE, verbose_name='Относится к чату')
+    answer_to = ForeignKey('Chat_Messages', on_delete=CASCADE, verbose_name='В ответ на')
+
+
+    class Meta:
+        verbose_name = 'Сообщение'
+        verbose_name_plural = 'Сообщения'
+        ordering = ['to_chat', '-created_at']
