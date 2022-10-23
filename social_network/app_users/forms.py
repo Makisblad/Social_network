@@ -3,9 +3,10 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-from .models import User
+from .models import *
 from django import forms
 from .widgets import DatePickerInput
+
 
 class UserRegisterForm(UserCreationForm):
     username = forms.CharField(label='Ник', widget=forms.TextInput(
@@ -29,3 +30,33 @@ class UserRegisterForm(UserCreationForm):
 class UserLoginForm(AuthenticationForm):
     username = forms.EmailField(label='E-mail', widget=forms.EmailInput(attrs={'class': 'form-control'}))
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'birth_date', 'info', 'status', 'partner', 'photo']
+        patrner = forms.ModelChoiceField(queryset=User.objects.all(), label='Партнер')
+        photo = forms.ImageField()
+        widgets = {
+            'first_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Имя'
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Фамилия'
+             }),
+            'birth_date': forms.DateInput(attrs={
+                'class': 'form-control'
+             }),
+            'info': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'О себе'
+            }),
+            'status': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Семейное положение',
+                'choices': 'status_choices'
+            })
+        }
+

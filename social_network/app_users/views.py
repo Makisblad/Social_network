@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import UserRegisterForm, UserLoginForm
+from .forms import UserRegisterForm, UserLoginForm, UserUpdateForm
 from django.contrib.auth import login, logout, authenticate
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, UpdateView
 from .models import *
 
 
@@ -22,6 +22,13 @@ class View_User(DetailView):
     template_name = 'app_users/user.html'
     context_object_name = 'user'
     allow_empty = False
+
+
+class Update_User(UpdateView):
+    model = User
+    template_name = 'app_users/user_update.html'
+    context_object_name = 'user'
+    form_class = UserUpdateForm
 
 
 def test(request):

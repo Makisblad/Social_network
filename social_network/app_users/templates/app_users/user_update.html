@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{user.first_name}} {{user.last_name}} {% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+    <div class="col-md-12">
+<h1>Редактирование информации</h1>
+<form enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    <table>
+    {{ form.as_table }}
+    </table>
+    <button type="submit" class="btn btn-primary btn-block" style="background-color: #0CC; border-color: #0CC">Сохранить</button>
+</form>
+<br>
+{% endblock %}

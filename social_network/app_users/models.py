@@ -1,7 +1,7 @@
 from autoslug import AutoSlugField
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.hashers import make_password, identify_hasher
-from django.db.models import Model, FileField, IntegerField, EmailField, CharField, BooleanField, DateTimeField, SET_NULL, PROTECT, \
+from django.db.models import Model, OneToOneField, FileField, IntegerField, EmailField, CharField, BooleanField, DateTimeField, SET_NULL, PROTECT, \
     TextField, ImageField, DateField, SlugField, ManyToManyField, ForeignKey, \
     CASCADE  # для оптимизации приложения импортируем только те модули, которые применяем
 from django.urls import reverse
@@ -34,27 +34,27 @@ class UserManager(BaseUserManager):
     def create_staffuser(self, email, username, password=None, name=None):
         user = self.create_user(email=email, username=username, password=password, is_staff=True, is_admin=False)
         return user
-
-
-class User(AbstractBaseUser):
-    status_choices = [
+status_choices = [
         ('в активном поиске', 'в активном поиске'),
         ('без отношений', 'без отношений'),
         ('в отношениях с', 'в отношениях с'),
         ('в браке с', 'в браке с'),
         ('все сложно', 'все сложно'),
-    ]
+]
+
+class User(AbstractBaseUser):
+
     username = CharField(max_length=30, unique=True, verbose_name='Ник')
     email = EmailField(max_length=40, unique=True, verbose_name='e-mail', editable=True)
     slug = AutoSlugField(populate_from='username', verbose_name='slug')
     first_name = CharField(max_length=30, blank=True, verbose_name='Имя', editable=True)
     last_name = CharField(max_length=30, blank=True, verbose_name='Фамилия', editable=True)
-    birth_date = DateField(blank=True, default='2022-01-01', editable=True)
+    birth_date = DateField(blank=True, default='2022-01-01', editable=True, verbose_name='Дата рождения')
     info = TextField(blank=True, editable=True)
     friends = ManyToManyField('User', blank=True, related_name='user_friends', editable=True)
-    status = CharField(max_length=50, choices=status_choices, default='без отношений', editable=True)
-    partner = ForeignKey('User', SET_NULL, null=True, default=None, blank=True, related_name='user_partner', editable=True)
-    photo = ImageField(upload_to='photo/%Y/%M/%D/', blank=True, null=True, editable=True)
+    status = CharField(max_length=50, choices=status_choices, default='без отношений', editable=True, verbose_name='Семейное положение')
+    partner = OneToOneField('User', SET_NULL, null=True, default=None, blank=True, related_name='user_partner', verbose_name='Партнер', editable=True)
+    photo = ImageField(upload_to='photo/%Y/%M/%D/', blank=True, null=True, editable=True, verbose_name='Фото')
     staff = BooleanField(default=False)
     admin = BooleanField(default=False)
     created_at = DateTimeField(auto_now_add=True)
